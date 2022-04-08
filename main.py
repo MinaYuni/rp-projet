@@ -49,6 +49,18 @@ def taille_min_max_mot(dictionnaire):
 
 
 def mots_de_taille(dictionnaire, taille):
+    """
+    Fonction qui sélectionne les mots du dictionnaire qui correspondent à la taille donnée.
+
+    :param dictionnaire: liste des mots du dictionnaire
+    :type dictionnaire: list[str]
+
+    :param taille: taille du mot
+    :type taille: int
+
+    :return: liste de mots de la taille donnée
+    :rtype: list[str]
+    """
     mots_correspondant = []
     for mot in dictionnaire:
         if len(mot) == taille:
@@ -57,15 +69,23 @@ def mots_de_taille(dictionnaire, taille):
 
 
 def wordlemind_csp(dictionnaire):
-    fin = False  # flag pour savoir si le jeu se termine
-    nb_tour = 0  # numéro du tour actuel
+    """
+    Modélisation du Wordle Mind et résolution par CSP.
+
+    :param dictionnaire: liste des mots du dictionnaire
+    :type dictionnaire: list[str]
+
+    :return: none
+    """
+    fin = False  # flag pour savoir quand le jeu se termine
+    nb_tour = 0  # nombre de tours effectués
 
     # choix aléatoire du mot secret
     mot_secret = random.choice(dictionnaire)
-    taille_mot_secret = len(mot_secret)
+    taille_mot = len(mot_secret)
 
     # sélection des mots correspondant à la taille du mot secret
-    liste_mots = mots_de_taille(dictionnaire, taille_mot_secret)
+    liste_mots = mots_de_taille(dictionnaire, taille_mot)
     taille_liste_mots = len(liste_mots)
 
     while not fin:
@@ -73,7 +93,6 @@ def wordlemind_csp(dictionnaire):
         # print("----- TOUR {} -----".format(nb_tour))
 
         mot_choisi = random.choice(liste_mots)
-        taille_mot_choisi = len(mot_choisi)
         # print("Mot choisi : {}".format(mot_choisi))
 
         if mot_choisi == mot_secret:
