@@ -102,7 +102,7 @@ def wordlemind_csp(dictionnaire):
             # print("PERDU!\n")
             liste_mots.remove(mot_choisi)
 
-    print("Nombre de tours total : {}/{}".format(nb_tour, taille_liste_mots))
+    print("Nombre de tours effectués : {}/{}".format(nb_tour, taille_liste_mots))
 
 
 if __name__ == "__main__":
