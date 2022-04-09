@@ -3,7 +3,6 @@ import string
 import time
 import collections
 
-
 alphabet = list(string.ascii_lowercase)
 Feedback = collections.namedtuple('Feedback', ['correct', 'proche'])
 
@@ -71,14 +70,13 @@ def recuperer_nb_lettres_proches(mot_actuel, proposition):
 
     # nombre de lettres proches (mal placées)
     nb_lettres_proches = 0
-
     # pour chaque lettre du mot proposé
     for lettre in proposition:
         # si la lettre est dans le mot actuel
-        if lettre in mot_actuel:
+        pos = mot_actuel.find(lettre)
+        if pos >= 0:
             # enlever toutes les occurrences de la lettre du mot actuel pour éviter de la compter à nouveau
-            mot_filtre = filter(lambda l: l != lettre, mot_actuel)
-            mot_actuel = ''.join(mot_filtre)
+            mot_actuel = mot_actuel[:pos] + mot_actuel[pos+1:]
 
             # incrémenter le nombre de lettres proches
             nb_lettres_proches += 1
@@ -158,10 +156,11 @@ def filtrer_propositions(pool, proposition, feedback):
     :rtype: list[str]
     """
     # pour chaque mot possible (pour chaque mot du pool des possibilités)
-    for mot_possible in pool:
-        # si le mot est possible selon les feedbacks et si le mot n'est pas déjà le mot proposé
-        if is_match(proposition, feedback, mot_possible) and (mot_possible != proposition):
-            yield mot_possible
+    # for mot_possible in pool:
+    #     # si le mot est possible selon les feedbacks et si le mot n'est pas déjà le mot proposé
+    #     if is_match(proposition, feedback, mot_possible) and (mot_possible != proposition):
+    #         yield mot_possible
+    return [mot for mot in pool if is_match(proposition, feedback, mot) and (mot != proposition)]
 
 
 def donner_proposition(pool, feedback):
@@ -179,16 +178,32 @@ def donner_proposition(pool, feedback):
     """
     longueur_minimale = float('infinity')
     mot_choisi = None
+    # mp = []  # liste (mot actuel, nombre de mots du pool ayant le même feedback que le mot actuel)
+    # mp_fb = []  # liste des mots du pool ayant le même feedback que le mot actuel
 
     # pour chaque mot possible (pour chaque mot du pool des possibilités)
     for mot_possible in pool:
-        # on filtre les possibilités
-        mots_possibles = list(filtrer_propositions(pool, mot_possible, feedback))
-        nb_mots_possibles = len(mots_possibles)
+        # on filtre les possibilités pour le mot_possible
+        # c'est-à-dire qu'on récupère les mots du pool ayant le même feedback que le mot_possible
+        liste_mots_possibles = filtrer_propositions(pool, mot_possible, feedback)
+        # nombre de mots du pool ayant le même feedback que le mot_possible
+        nb_mots_possibles = len(liste_mots_possibles)
+        # mp.append((mot_possible, nb_mots_possibles))
 
+        # le pire cas : quand le feedback reste le même au prochain tour
+        # (quand on ne gagne aucune informations supplémentaires sur les lettres du mot secret)
+        # on cherche à ce que dans le pire cas, l'espace de recherche soit le plus petit possible
+        # (d'où l'intérêt de choisir la longueur minimale ici)
+        # dans le cas où nb_mots_possibles = 0 (quand aucun mot du pool n'a le même feedback que le mot_possible)
+        # ça veut dire que si le mot choisi n'est pas le bon, ça donnera forcément des informations en plus
         if longueur_minimale > nb_mots_possibles:
             longueur_minimale = nb_mots_possibles
             mot_choisi = mot_possible
+            # mp_fb = liste_mots_possibles
+
+    # mp.sort(key=lambda x: x[1])
+    # print("mp : ", mp)
+    # print("mp_fb : ", mp_fb)
 
     return mot_choisi
 
@@ -203,7 +218,9 @@ def wordlemind_csp(dictionnaire):
     :return: none
     """
     fin = False  # flag pour savoir quand le jeu se termine
+    fin_max = False
     nb_tour = 0  # nombre de tours effectués
+    nb_tour_max = 0
 
     # choix aléatoire du mot secret
     mot_secret = random.choice(dictionnaire)
@@ -217,7 +234,7 @@ def wordlemind_csp(dictionnaire):
 
     # 1ere proposition de mot, choisi de manière aléatoire
     proposition = random.choice(liste_mots)
-
+    temps_debut_min = time.perf_counter()
     while not fin:
         nb_tour += 1
         print("----- TOUR {} ----- {}".format(nb_tour, mot_secret))
@@ -238,12 +255,12 @@ def wordlemind_csp(dictionnaire):
             fin = True
             print("\nGAGNE ! Le mot était bien {}.".format(mot_secret.upper()))
         else:
-            liste_mots = list(filtrer_propositions(liste_mots, proposition, feedback))
+            liste_mots = filtrer_propositions(liste_mots, proposition, feedback)
             print("Il reste {} possibilités.\n".format(len(liste_mots)))
 
             proposition = donner_proposition(liste_mots, feedback)
-
-    print("Tours effectués : {}/{}".format(nb_tour, nb_possibilites))
+    temps_debut_max = time.perf_counter()
+    print("Tours effectués : {}/{} en {}".format(nb_tour, nb_possibilites, temps_debut_max - temps_debut_min))
 
 
 if __name__ == "__main__":
