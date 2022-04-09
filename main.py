@@ -147,8 +147,8 @@ def is_match(proposition, feedback, mot_possible):
 
 def filtrer_propositions(pool, proposition, feedback):
     """
-    Fonction qui filtre l'ensemble des possibilités (pool) et élimine celles qui ne peuvent pas
-    être le mot secret selon le feedback (nombres des lettres correctes et proches).
+    Fonction qui filtre l'ensemble des possibilités (pool) selon le mot proposé et
+    le feedback (nombres des lettres correctes et proches).
 
     :param pool: liste des mots possibles
     :param proposition: mot proposé
@@ -212,9 +212,9 @@ def donner_proposition(pool, feedback):
     return mot_choisi
 
 
-def wordlemind_csp(dictionnaire):
+def wordlemind_csp_fc(dictionnaire):
     """
-    Modélisation du Wordle Mind et résolution par CSP.
+    Modélisation du Wordle Mind et résolution par CSP avec forward checking.
 
     :param dictionnaire: liste de mots du dictionnaire
     :type dictionnaire: list[str]
@@ -236,7 +236,7 @@ def wordlemind_csp(dictionnaire):
 
     # 1ere proposition de mot, choisi de manière aléatoire
     proposition = random.choice(liste_mots)
-    temps_debut_min = time.perf_counter()
+
     while not fin:
         nb_tour += 1
         print("----- TOUR {} ----- {}".format(nb_tour, mot_secret))
@@ -257,10 +257,13 @@ def wordlemind_csp(dictionnaire):
             fin = True
             print("\nGAGNE ! Le mot était bien {}.".format(mot_secret.upper()))
         else:
+            # filtrage des mots de la pool selon le feedback
             liste_mots = filtrer_propositions(liste_mots, proposition, feedback)
             print("Il reste {} possibilités.\n".format(len(liste_mots)))
 
             # proposition = random.choice(liste_mots)
+
+            # choix de la meilleur proposition selon les mots possibles et le feedback
             proposition = donner_proposition(liste_mots, feedback)
 
     print("Tours effectués : {}/{}".format(nb_tour, nb_possibilites))
@@ -273,7 +276,7 @@ if __name__ == "__main__":
     dico = lire_dictionnaire(file_path)
 
     temps_debut = time.perf_counter()
-    wordlemind_csp(dico)
+    wordlemind_csp_fc(dico)
     temps_fin = time.perf_counter()
 
     temps_total = temps_fin - temps_debut
