@@ -259,8 +259,8 @@ def wordlemind_csp(dictionnaire):
             print("Il reste {} possibilités.\n".format(len(liste_mots)))
 
             proposition = donner_proposition(liste_mots, feedback)
-    temps_debut_max = time.perf_counter()
-    print("Tours effectués : {}/{} en {}".format(nb_tour, nb_possibilites, temps_debut_max - temps_debut_min))
+
+    print("Tours effectués : {}/{}".format(nb_tour, nb_possibilites))
 
 
 if __name__ == "__main__":
