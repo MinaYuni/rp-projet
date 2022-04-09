@@ -258,6 +258,7 @@ def wordlemind_csp(dictionnaire):
             liste_mots = filtrer_propositions(liste_mots, proposition, feedback)
             print("Il reste {} possibilités.\n".format(len(liste_mots)))
 
+            # proposition = random.choice(liste_mots)
             proposition = donner_proposition(liste_mots, feedback)
 
     print("Tours effectués : {}/{}".format(nb_tour, nb_possibilites))
