@@ -156,10 +156,7 @@ def filtrer_propositions(pool, proposition, feedback):
     :rtype: list[str]
     """
     # pour chaque mot possible (pour chaque mot du pool des possibilités)
-    # for mot_possible in pool:
-    #     # si le mot est possible selon les feedbacks et si le mot n'est pas déjà le mot proposé
-    #     if is_match(proposition, feedback, mot_possible) and (mot_possible != proposition):
-    #         yield mot_possible
+    # si le mot est possible selon le feedback et si le mot n'est pas déjà le mot proposé
     return [mot for mot in pool if is_match(proposition, feedback, mot) and (mot != proposition)]
 
 
@@ -218,9 +215,7 @@ def wordlemind_csp(dictionnaire):
     :return: none
     """
     fin = False  # flag pour savoir quand le jeu se termine
-    fin_max = False
     nb_tour = 0  # nombre de tours effectués
-    nb_tour_max = 0
 
     # choix aléatoire du mot secret
     mot_secret = random.choice(dictionnaire)
