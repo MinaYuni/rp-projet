@@ -3,7 +3,11 @@ import string
 import time
 import collections
 
+# liste des lettres de l'alphabet (en minuscule)
 alphabet = list(string.ascii_lowercase)
+
+# Feedback : nombre de lettres correctes (bien placées),
+#            nombre de lettre proches (mal placées)
 Feedback = collections.namedtuple('Feedback', ['correct', 'proche'])
 
 
@@ -45,6 +49,7 @@ def enlever_lettres_correctes(mot_actuel, proposition):
     actuel = [a for (a, b) in zip(mot_actuel, proposition) if a != b]
     guess = [b for (a, b) in zip(mot_actuel, proposition) if a != b]
 
+    # transformer la liste de string en une chaine de caractère
     actuel = ''.join(map(str, actuel))
     guess = ''.join(map(str, guess))
 
@@ -142,11 +147,12 @@ def is_match(proposition, feedback, mot_possible):
 
 def filtrer_propositions(pool, proposition, feedback):
     """
-    Fonction qui filtre l'ensemble des possibilités et élimine celles qui ne peuvent pas être le mot secret.
+    Fonction qui filtre l'ensemble des possibilités (pool) et élimine celles qui ne peuvent pas
+    être le mot secret selon le feedback (nombres des lettres correctes et proches).
 
     :param pool: liste des mots possibles
     :param proposition: mot proposé
-    :param feedback: feedback (nombres des lettres correctes et proches)
+    :param feedback: feedback
 
     :type pool: list[str]
     :type proposition: str
@@ -162,10 +168,11 @@ def filtrer_propositions(pool, proposition, feedback):
 
 def donner_proposition(pool, feedback):
     """
-    Fonction qui renvoie le meilleur choix de mot parmi les mots possibles et les lettres correctes et proches.
+    Fonction qui renvoie le meilleur choix de mot parmi les mots possibles (pool)
+    selon le feedback (nombres des lettres correctes et proches).
 
     :param pool: liste des mots possibles
-    :param feedback: feedback (nombres des lettres correctes et proches)
+    :param feedback: feedback
 
     :type pool: list[str]
     :type feedback: Feedback
