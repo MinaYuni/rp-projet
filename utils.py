@@ -3,6 +3,7 @@ import collections
 import random
 
 
+# liste des lettres de l'alphabet en lower case
 alphabet = list(string.ascii_lowercase)
 
 # Feedback : nombre de lettres correctes (bien placées),
@@ -10,7 +11,7 @@ alphabet = list(string.ascii_lowercase)
 Feedback = collections.namedtuple('Feedback', ['correct', 'proche'])
 
 
-def generer_mot_secret(n, dictionnaire):
+def generer_mot_secret(dictionnaire, n=3):
     """
     Fonction qui génère aléatoirement un mot de taille n du dictionnaire.
 
@@ -23,12 +24,13 @@ def generer_mot_secret(n, dictionnaire):
     :return: un mot du dictionnaire
     :rtype: list[str]
     """
+
     return random.choice(dictionnaire[n])
 
 
 def lire_dictionnaire(nom_fichier):
     """
-    Fonction qui lit les mots d'un dictionnaire et les met dans un dictionnaire qui a pour clé la taille des mots,
+    Fonction qui lit les mots d'un dictionnaire et les met dans un dictionnaire qui a pour clé la taille des mots
     et pour valeur la liste des mots correspondants à la taille de la clé.
 
     :param nom_fichier: chemin du fichier
@@ -70,6 +72,7 @@ def enlever_lettres_correctes(mot_actuel, proposition):
     :return: tuple de mots où les lettres correctes sont enlevés
     :rtype: (list[str], list[str])
     """
+
     actuel = [a for (a, b) in zip(mot_actuel, proposition) if a != b]
     guess = [b for (a, b) in zip(mot_actuel, proposition) if a != b]
 
@@ -93,6 +96,7 @@ def recuperer_nb_lettres_proches(mot_actuel, proposition):
     :return: nombre total des lettres proches
     :rtype: int
     """
+
     # enlever les lettres correctes pour éviter de les compter deux fois
     mot_actuel, proposition = enlever_lettres_correctes(mot_actuel, proposition)
     # print(mot_actuel)
@@ -126,6 +130,7 @@ def recuperer_nb_lettres_correctes(mot_actuel, proposition):
     :return: nombre total des lettres correctes
     :rtype: int
     """
+
     nb_lettres_correctes = sum([1 for (a, b) in zip(mot_actuel, proposition) if a == b])
     return nb_lettres_correctes
 
@@ -144,6 +149,7 @@ def recuperer_feedback(mot_actuel, proposition):
     :return: feedback (nombre de lettres correctes et proches)
     :rtype: Feedback
     """
+
     fb = Feedback(recuperer_nb_lettres_correctes(mot_actuel, proposition),
                   recuperer_nb_lettres_proches(mot_actuel, proposition))
     return fb
@@ -161,15 +167,25 @@ def test_compatibilite(proposition, feedback, mot_possible):
     :type feedback: Feedback
     :type mot_possible: list[str]
 
-    :return: vrai ou faux
+    :return: vrai si le mot est possible, faux sinon
     :rtype: bool
     """
+
     # si le feedback du mot proposé et celui du mot possible est le même
     # c'est-à-dire si le nombre des lettres correctes et proches sont les mêmes pour les deux mots
     return feedback == recuperer_feedback(mot_possible, proposition)
 
 
-def nb_incompatibilites(mot, tentatives_precedentes):
+def get_nb_incompatibilites(mot, tentatives_precedentes):
+    """
+    Fonction qui renvoie le nombre d'incompatibilités du mot actuel par rapport aux tentatives précédentes.
+
+    :param mot: mot actuel
+    :param tentatives_precedentes: liste des tentatives précédentes
+
+    :return: nombre d'incompatibilités
+    """
+
     cpt_incompatibilites = 0
     for ancien_mot, feedback in tentatives_precedentes:
         compatible = test_compatibilite(ancien_mot, feedback, mot)
@@ -177,3 +193,4 @@ def nb_incompatibilites(mot, tentatives_precedentes):
             cpt_incompatibilites += 1
 
     return cpt_incompatibilites
+
