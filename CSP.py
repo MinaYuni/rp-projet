@@ -157,7 +157,7 @@ def instancier_variable(lettres_restantes, instanciation_partielle):
     while lettres_restantes:
         # prendre la premiere lettre de la liste
         lettre = lettres_restantes.pop(0)
-        # faire uns instanciation avec cette lettre
+        # faire une instanciation avec cette lettre
         instanciation_courante = instanciation_partielle + [lettre]
 
         # si cette instanciation est possible,
