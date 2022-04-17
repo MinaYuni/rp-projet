@@ -25,7 +25,7 @@ class WordleMindProblem:
 
     def resolution_par_CSP_A1(self):
         """
-        Fonction qui fait la résolution de Wordle Mind en CSP par retour arrière chronologique (RAC).
+        Fonction qui fait la résolution de Wordle Mind en CSP par Retour Arrière Chronologique (RAC).
 
         :return: nombre de tentatives faites
         :rtype: int
