@@ -23,9 +23,12 @@ class WordleMindProblem:
 
         self.contraintes = []  # liste des contraintes
 
-    def resolution_par_CSP_A1(self):
+    def resolution_par_CSP_A1(self, render=False):
         """
         Fonction qui fait la résolution de Wordle Mind en CSP par Retour Arrière Chronologique (RAC).
+
+        :param render: si on l'affichage des tentatives
+        :type render: bool
 
         :return: nombre de tentatives faites
         :rtype: int
@@ -52,7 +55,7 @@ class WordleMindProblem:
                     if csp.verifie_consistance_globale(instanciation_courante, [], self.dictionnaire):
 
                         # fait une tentative avec l'instanciation courante
-                        fin, feedback = self.test_tentative(instanciation_courante)
+                        fin, feedback = self.test_tentative(instanciation_courante, render)
 
                         # si on a trouvé le mot secret, alors on s'arrête et on renvoie le nombre de tentatives faites
                         if fin:
@@ -73,9 +76,12 @@ class WordleMindProblem:
 
         return self.nb_tentatives
 
-    def resolution_par_CSP_A2(self):
+    def resolution_par_CSP_A2(self, render=False):
         """
         Fonction qui fait la résolution de Wordle Mind en CSP par Forward Checking (FC).
+
+        :param render: si on l'affichage des tentatives
+        :type render: bool
 
         :return: nombre de tentatives faites
         :rtype: int
@@ -103,7 +109,7 @@ class WordleMindProblem:
                     if csp.verifie_consistance_globale(instanciation_courante, [], self.dictionnaire):
 
                         # fait une tentative avec l'instanciation courante
-                        fin, feedback = self.test_tentative(instanciation_courante)
+                        fin, feedback = self.test_tentative(instanciation_courante, render)
 
                         # si on a trouvé le mot secret, alors on s'arrête et on renvoie le nombre de tentatives faites
                         if fin:
@@ -124,12 +130,15 @@ class WordleMindProblem:
 
         return self.nb_tentatives
 
-    def resolution_par_CSP_opt(self, premier_mot=None):
+    def resolution_par_CSP_opt(self, premier_mot=None, render=False):
         """
         Fonction qui fait la résolution de Wordle Mind en CSP de manière optimisée.
 
         :param premier_mot: premier mot à tester
+        :param render: si on l'affichage des tentatives
+
         :type premier_mot: list[str]
+        :type render: bool
 
         :return: nombre de tentatives faites
         :rtype: int
@@ -139,7 +148,7 @@ class WordleMindProblem:
         liste_mots = self.dictionnaire[self.taille_mot]  # sélection des mots correspondant à la taille du mot secret
 
         # choix du premier (s'il n'y pas de premier mot donné)
-        if premier_mot is not None:
+        if premier_mot is None:
             # aléatoire
             proposition = random.choice(liste_mots)
         else:
@@ -148,21 +157,23 @@ class WordleMindProblem:
 
         # tant qu'on a pas fini (trouvé le mot secret)
         while not fin:
-            fin, feedback = self.test_tentative(proposition)
+            fin, feedback = self.test_tentative(proposition, render)
             liste_mots = csp.filtrer_propositions(liste_mots, proposition, feedback)
             proposition = csp.donner_proposition(liste_mots, feedback)
 
         return self.nb_tentatives
 
-    def resolution_par_algo_genetique(self, maxsize, maxgen):
+    def resolution_par_algo_genetique(self, maxsize, maxgen, render=False):
         """
         Fonction qui fait la résolution de Wordle Mind avec un algorithme génétique.
 
         :param maxsize: taille max de l'ensemble E
         :param maxgen: nombre de génération
+        :param render: si on veut l'affichage des tentatives
 
         :type maxsize: int
         :type maxgen: int
+        :type render: bool
 
         :return: nombre de tentatives faites
         :rtype: int
@@ -171,7 +182,7 @@ class WordleMindProblem:
         # choix aléatoire d'un mot parmi ceux qui ont la même taille que le mot secret
         mot_choisi = random.choice(self.dictionnaire[self.taille_mot])
         # teste du mot choisi
-        fin, feedback = self.test_tentative(mot_choisi)
+        fin, feedback = self.test_tentative(mot_choisi, render)
 
         # tant qu'on a pas fini (trouvé le mot secret)
         while not fin:
@@ -180,7 +191,7 @@ class WordleMindProblem:
             # choix aléatoire du mot parmi cette ensemble
             mot_choisi = random.choice(ens)
             # teste du mot choisi
-            fin, feedback = self.test_tentative(mot_choisi)
+            fin, feedback = self.test_tentative(mot_choisi, render)
 
         return self.nb_tentatives
 

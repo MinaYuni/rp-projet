@@ -89,7 +89,7 @@ def lire_dictionnaire_trie(nom_fichier):
         dico_de_travail["fin"] = "fin"  # pour pouvoir tester l'existence d'un mot qui pourrait être préfixe d'un autre mot
 
     fichier.close()
-    print(racine_dico)
+
     return racine_dico
 
 
@@ -123,7 +123,7 @@ def enlever_lettres_correctes(mot_actuel, proposition):
     :type proposition: list[str]
 
     :return: tuple de mots où les lettres correctes sont enlevés
-    :rtype: (list[str], list[str])
+    :rtype: (str, str)
     """
 
     actuel = [a for (a, b) in zip(mot_actuel, proposition) if a != b]
@@ -152,7 +152,6 @@ def recuperer_nb_lettres_proches(mot_actuel, proposition):
 
     # enlever les lettres correctes pour éviter de les compter deux fois
     mot_actuel, proposition = enlever_lettres_correctes(mot_actuel, proposition)
-    # print(mot_actuel)
 
     # nombre de lettres proches (mal placées)
     nb_lettres_proches = 0
