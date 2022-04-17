@@ -188,10 +188,15 @@ class WordleMindProblem:
         while not fin:
             # génération de l'ensemble des mots compatibles avec les tentatives précédentes
             ens = ag.engendrer_ens(mot_choisi, self.dictionnaire, self.tentatives, maxsize, maxgen)
-            # choix aléatoire du mot parmi cette ensemble
-            mot_choisi = random.choice(ens)
-            # teste du mot choisi
-            fin, feedback = self.test_tentative(mot_choisi, verbose)
+
+            if ens:
+                # choix aléatoire du mot parmi cette ensemble
+                mot_choisi = random.choice(ens)
+                # teste du mot choisi
+                fin, feedback = self.test_tentative(mot_choisi, verbose)
+            else:
+                fin = True
+                self.nb_tentatives = -1
 
         return self.nb_tentatives
 
