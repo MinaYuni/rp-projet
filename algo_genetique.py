@@ -117,7 +117,12 @@ def croisement(probabilite, parents):
 
     # si croisement possible
     if random.random() > probabilite:
-        return False
+        return False, random.choice(parents).copy()
+
+    parents = copy.deepcopy(parents)
+    parent1 = random.choice(parents)
+    parents.remove(parent1)
+    parent2 = random.choice(parents)
 
     liste_indices = range(1, len(parent1))  # liste des indices du mot
 
@@ -128,7 +133,7 @@ def croisement(probabilite, parents):
     parent1 = parent1[:pos] + parent2[pos:]
     parent2 = parent2[:pos] + tmp[pos:]
 
-    return True
+    return True, random.choice([parent1, parent2])
 
 
 def get_mot_proche(mot, dictionnaire):
@@ -256,7 +261,7 @@ def engendrer_ens(tentative_precedente, dictionnaire, tentatives, maxsize, maxge
 
             somme = sum(fitnesses)
             distribution_proba = [fitness / somme for fitness in fitnesses]
-            indices_parents = np.random.choice(range(5), 2, distribution_proba)
+            indices_parents = np.random.choice(range(taille_pop), size=nb_parents, p=distribution_proba)
             parents = [population[i] for i in indices_parents]
             gen += 1
 

@@ -122,6 +122,23 @@ def verifie_consistance_globale(instanciation, tentatives, dictionnaire):
     return False
 
 
+def verifie_consistance_globale_trie(instanciation, tentatives, trie):
+    """
+    """
+
+    # teste la compatibilité du mot avec les tentatives précédentes
+    if utils.get_nb_incompatibilites(instanciation, tentatives) != 0:
+        return False
+
+    # teste l'existence du mot dans le dictionnaire
+    existe = utils.present_dans_trie(instanciation, trie)
+    if not existe:
+        return False
+
+    # TODO other constraints
+    return False
+
+
 def instancier_variable(lettres_restantes, instanciation_partielle):
     """
     Fonction qui instancie la variable en vérifiant les contraintes locales.

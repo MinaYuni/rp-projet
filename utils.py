@@ -15,11 +15,11 @@ def generer_mot_secret(dictionnaire, n=3):
     """
     Fonction qui génère aléatoirement un mot de taille n du dictionnaire.
 
-    :param n: nombre de lettres du mot secret
     :param dictionnaire: dictionnaire de mots
+    :param n: nombre de lettres du mot secret
 
-    :type n: int
     :type dictionnaire: dict[int, list[list[str]]]
+    :type n: int
 
     :return: un mot du dictionnaire
     :rtype: list[str]
@@ -57,6 +57,59 @@ def lire_dictionnaire(nom_fichier):
 
     fichier.close()
     return dictionnaire
+
+
+def lire_dictionnaire_trie(nom_fichier):
+    """
+    Fonction qui crée un arbre Trie pour représenter le dictionnaire contenu dans le fichier passé en paramètre.
+
+    :param nom_fichier: chemin du fichier
+    :type nom_fichier: str
+
+    :return:
+    :rtype:
+    """
+
+    # La clés du dictionnaire à la racine représentent les tailles des mots.
+    # Pour chaque taille de mot, on retrouve un Trie.
+
+    fichier = open(nom_fichier, "r")
+    racine_dico = dict()
+
+    for mot in fichier:
+
+        mot = mot.strip('\n')
+        taille_mot = len(mot)
+
+        dico_de_travail = racine_dico.setdefault(taille_mot, dict())
+
+        for lettre in mot:
+            dico_de_travail = dico_de_travail.setdefault(lettre, dict())
+
+        dico_de_travail["fin"] = "fin" # pour pouvoir tester l'existence d'un mot qui pourrait être préfixe d'un autre mot
+
+    fichier.close()
+    print(racine_dico)
+    return racine_dico
+
+
+def present_dans_trie(mot, trie):
+    """
+    Fonction qui teste la présence d'un mot dans un Trie.
+
+    :return: booléen indiquant la présence ou non du mot
+    :rtype: bool
+    """
+
+    dico_de_travail = trie
+    for lettre in mot:
+
+        if lettre not in dico_de_travail:
+            return False
+
+        dico_de_travail = dico_de_travail[lettre]
+
+    return "fin" in dico_de_travail
 
 
 def enlever_lettres_correctes(mot_actuel, proposition):

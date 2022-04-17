@@ -66,15 +66,63 @@ class WordleMindProblem:
                         indice_var -= 1
                         instanciation_courante = instanciation_courante[:indice_var]
 
-            else:
-                all_lettres_restantes[var] = copy.copy(self.domaines[var])
-                var -= 1
-                instanciation_courante = instanciation_courante[:var]
+            else:  # sinon backtracking
+                all_lettres_restantes[indice_var] = copy.copy(self.domaines[indice_var])
+                indice_var -= 1
+                instanciation_courante = instanciation_courante[:indice_var]
 
         return self.nb_tentatives
 
     def resolution_par_CSP_A2(self):
-        pass
+        """
+        Fonction qui fait la résolution de Wordle Mind en CSP par Forward Checking (FC).
+
+        :return: nombre de tentatives faites
+        :rtype: int
+        """
+        # TODO
+        fin = False  # flag pour savoir quand le jeu se termine
+        indice_var = 0  # indice de la variable du csp (lettre du mot)
+        instanciation_courante = []  # instanciation courante (list[str])
+        all_lettres_restantes = copy.deepcopy(self.domaines)  # dictionnaire des lettres restantes pour chaque variable
+
+        # tant qu'on a pas fini (trouvé le mot secret)
+        while not fin:
+            # réussite de l'instanciation, lettres restantes pour la variable courante, instanciation courante
+            reussite, lettres_restantes, instanciation_courante \
+                = csp.instancier_variable(all_lettres_restantes[indice_var], instanciation_courante)
+
+            # si l'instanciation de la variable courante a réussi
+            if reussite:
+                all_lettres_restantes[indice_var] = lettres_restantes
+                indice_var += 1  # variable suivante
+
+                # si la taille du mot courant est celle du mot secret
+                if indice_var == self.taille_mot:
+                    # si le mot existe et s'il est compatible
+                    if csp.verifie_consistance_globale(instanciation_courante, [], self.dictionnaire):
+
+                        # fait une tentative avec l'instanciation courante
+                        fin, feedback = self.test_tentative(instanciation_courante)
+
+                        # si on a trouvé le mot secret, alors on s'arrête et on renvoie le nombre de tentatives faites
+                        if fin:
+                            return self.nb_tentatives
+                        else:  # sinon backtracking
+                            # met à jour la liste des lettres restantes en fonction de la mise à jour des domaines
+                            utils.reduire_domaines(instanciation_courante, feedback, all_lettres_restantes)
+                            indice_var -= 1
+                            instanciation_courante = instanciation_courante[:indice_var]
+                    else:  # sinon backtracking
+                        indice_var -= 1
+                        instanciation_courante = instanciation_courante[:indice_var]
+
+            else:  # sinon backtracking
+                all_lettres_restantes[indice_var] = copy.copy(self.domaines[indice_var])
+                indice_var -= 1
+                instanciation_courante = instanciation_courante[:indice_var]
+
+        return self.nb_tentatives
 
     def resolution_par_CSP_opt(self, premier_mot=None):
         """
