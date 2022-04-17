@@ -8,7 +8,7 @@ alphabet = list(string.ascii_lowercase)
 
 # Feedback : nombre de lettres correctes (bien placées),
 #            nombre de lettre proches (mal placées)
-Feedback = collections.namedtuple('Feedback', ['correct', 'proche'])
+Feedback = collections.namedtuple('Feedback', ['correctes', 'proches'])
 
 
 def generer_mot_secret(dictionnaire, n=3):
@@ -86,7 +86,7 @@ def lire_dictionnaire_trie(nom_fichier):
         for lettre in mot:
             dico_de_travail = dico_de_travail.setdefault(lettre, dict())
 
-        dico_de_travail["fin"] = "fin" # pour pouvoir tester l'existence d'un mot qui pourrait être préfixe d'un autre mot
+        dico_de_travail["fin"] = "fin"  # pour pouvoir tester l'existence d'un mot qui pourrait être préfixe d'un autre mot
 
     fichier.close()
     print(racine_dico)
@@ -247,3 +247,33 @@ def get_nb_incompatibilites(mot, tentatives_precedentes):
 
     return cpt_incompatibilites
 
+
+def reduire_domaines(mot, feedback, domaines):
+    """
+    :param mot: mot de la tentative précédente
+    :param feedback: feedback de la tentative précédente
+    :param domaines: dictionnaire qui contient une liste de lettres acceptables pour chaque variable
+
+    :type mot: list[str]
+    :type feedback: Feedback
+    :type domaines: dict[int: list[str]]
+
+    :return: none
+    """
+
+    if feedback.correctes == 0:
+        # si aucune lettre n'est correcte ni proche
+        if feedback.proches == 0:
+            # on retire toutes les lettres du mot des domaines de toutes les variables
+            for i in range(len(mot)):
+                for lettre in mot:
+                    if lettre in domaines[i]:
+                        domaines[i].remove(lettre)
+
+        # si aucune lettre n'est correcte mais certaines sont proches
+        else:
+            # on retire la lettre instancié pour chaque variable du domaine de cette variable
+            # ex : on retire la première lettre du mot de la variable 0 car on sait qu'elle n'apparaitra jamais à cette position
+            for i in range(len(mot)):
+                if mot[i] in domaines[i]:
+                    domaines[i].remove(mot[i])
