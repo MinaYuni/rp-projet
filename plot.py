@@ -130,6 +130,8 @@ def lancer_all_algo(liste_tailles, liste_algo, nb_tours, dictionnaire, trie, dos
             liste_moy_essais.append(mean(liste_nb_essais))
             liste_moy_tps.append(mean(liste_tps))
 
+            f.close()
+
         liste_all_essais.append(liste_moy_essais)
         liste_all_tps.append(liste_moy_tps)
 
@@ -173,7 +175,7 @@ def recuperer_donnees_pour_graphe(liste_tailles, liste_algo, liste_all_essais, l
     return liste_donnees_essais, liste_donnees_tps
 
 
-def afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donnees_tps, nb_tours, taille_min, taille_max):
+def afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donnees_tps, nb_tours, taille_min, taille_max, nom_dossier):
     """
     Fonction qui plot le nombre d'essais moyen et le temps moyen d'exécution de chaque algorithme en fonction de la taille du mot secret.
     :param liste_tailles: liste des tailles du mot secret
@@ -186,6 +188,11 @@ def afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donne
     :type liste_donnees_tps: list[list[float]]
     :return: None
     """
+
+    # récupérer le nom des algo
+    noms_aglo = ""
+    for algo in liste_algo:
+        noms_aglo += algo+"_"
 
     fig, axs = plt.subplots(1, 2, figsize=(18, 8))
 
@@ -203,10 +210,8 @@ def afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donne
 
     plt.legend()
     # plt.show()
-    path = "./data/n{}_min{}_max{}".format(nb_tours, taille_min, taille_max)
+    path = "./{}/n{}_min{}_max{}_{}".format(nom_dossier, nb_tours, taille_min, taille_max, noms_aglo)
     plt.savefig(path)
-
-    print("\nFile save to: {}".format(path))
 
 
 if __name__ == "__main__":
@@ -216,7 +221,7 @@ if __name__ == "__main__":
     trie = utils.lire_dictionnaire_trie(file_path)
 
     d = datetime.datetime.today()
-    nom_run = d.strftime("%Y_%m_%d-%H-%M-%S")
+    nom_run = d.strftime("%Y_%m_%d-%H:%M:%S")
     dossier = "./test_data/"+nom_run+"/"
     
     try:
@@ -229,8 +234,8 @@ if __name__ == "__main__":
     affichage = True   # si on veut l'affichage des tentatives
     
     nb_tours = 20        # nombre de fois qu'on exécute les algorithmes
-    taille_min = 2      # taille minimale du mot secret
-    taille_max = 5      # taille maximale du mot secret
+    taille_min = 4      # taille minimale du mot secret
+    taille_max = 8      # taille maximale du mot secret
 
     maxsize = 5         # taille max de l'ensemble E
     maxgen = 20         # nombre max de générations
@@ -251,4 +256,4 @@ if __name__ == "__main__":
     liste_donnees_essais, liste_donnees_tps = recuperer_donnees_pour_graphe(liste_tailles, liste_algo, liste_all_essais, liste_all_tps)
 
     # plot
-    afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donnees_tps, nb_tours, taille_min, taille_max)
+    afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donnees_tps, nb_tours, taille_min, taille_max, dossier)
