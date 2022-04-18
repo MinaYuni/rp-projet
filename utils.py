@@ -12,6 +12,20 @@ alphabet = list(string.ascii_lowercase)
 Feedback = collections.namedtuple('Feedback', ['correctes', 'proches'])
 
 
+def liste_mot_en_str(mot_list):
+    """
+    Fonction qui change une liste de char en une chaine de caractères.
+    :param mot_list: liste de char
+    :type mot_list: list[str]
+    :return: chaine de caractère
+    :rtype: str
+    """
+    mot_str = ""
+    for lettre in mot_list:
+        mot_str += lettre
+    return mot_str
+
+
 def generer_mot_secret(dictionnaire, n=3):
     """
     Fonction qui génère aléatoirement un mot de taille n du dictionnaire.

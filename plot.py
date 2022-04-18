@@ -9,20 +9,6 @@ import utils
 from WordleMindProblem import WordleMindProblem
 
 
-def liste_mot_en_str(mot_list):
-    """
-    Fonction qui change une liste de char en une chaine de caractères.
-    :param mot_list: liste de char
-    :type mot_list: list[str]
-    :return: chaine de caractère
-    :rtype: str
-    """
-    mot_str = ""
-    for lettre in mot_list:
-        mot_str += lettre
-    return mot_str
-
-
 def lancer_algo(mot_secret, dictionnaire, trie, nom_algo, maxsize=5, maxgen=20, affichage=False):
     """
     Fonction qui lance un algorithme donné en paramètre et renvoie le nombre de tentatives faites et le temps d'exécution.
@@ -122,7 +108,7 @@ def lancer_all_algo(liste_tailles, liste_algo, nb_tours, dictionnaire, trie, dos
                 mot_secret = utils.generer_mot_secret(dictionnaire, n=taille)
 
                 if affichage:
-                    print("\nmot secret:\t{}".format(liste_mot_en_str(mot_secret).upper()))
+                    print("\nmot secret:\t{}".format(utils.liste_mot_en_str(mot_secret).upper()))
 
                 nb_essais, tps_total = lancer_algo(mot_secret, dictionnaire, trie, algo, maxsize=maxsize, maxgen=maxgen,
                                                    affichage=affichage)
