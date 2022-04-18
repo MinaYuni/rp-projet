@@ -101,7 +101,7 @@ def present_dans_trie(mot, trie):
     :rtype: bool
     """
 
-    dico_de_travail = trie
+    dico_de_travail = trie[len(mot)]
     for lettre in mot:
 
         if lettre not in dico_de_travail:

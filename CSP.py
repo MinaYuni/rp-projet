@@ -1,3 +1,4 @@
+import copy
 import random
 import time
 import utils
@@ -86,7 +87,7 @@ def verifie_consistance_locale(instanciation, contraintes):
     :rtype: bool
     """
 
-    # TODO
+    # TODO ?
     return True
 
 
@@ -136,7 +137,7 @@ def verifie_consistance_globale_trie(instanciation, tentatives, trie):
         return False
 
     # TODO other constraints
-    return False
+    return True
 
 
 def instancier_variable(lettres_restantes, instanciation_partielle):
@@ -168,8 +169,93 @@ def instancier_variable(lettres_restantes, instanciation_partielle):
     return False, [], instanciation_partielle
 
 
-def forward_checking(instanciation_partielle, all_lettres_possibles, tentatives, dictionnaire):
-    # TODO
+def forward_checking(instanciation_partielle, taille_mot, all_lettres_restantes, tentatives, trie):
+    """
+
+    :param instanciation_partielle: mot partiellement instancié
+    :param taille_mot: nombre de lettres du mot secret
+    :param all_lettres_restantes: 
+    :param tentatives: liste des tentatives précédentes avec leur feedback
+    :param trie: dictionnaire sous forme de Trie
+
+    :type instanciation_partielle: list[str]
+    :type taille_mot: int
+    :type all_lettres_restantes: dict[int, list[str]]
+    :type tentatives: list[list[str], Feedback]
+    :type trie: 
+    """
+    
+    taille_instanciation = len(instanciation_partielle)
+
+    dico_de_travail = trie[taille_mot]
+
+    # On se positionne au bon niveau du Trie
+    for lettre in instanciation_partielle:
+        if lettre in dico_de_travail:
+            dico_de_travail = dico_de_travail[lettre]
+
+    # On met à jour le domaine de chaque variable qui n'est pas encore instanciée
+    # (Toutes les variables sont liées entre elles par le dictionnaire et les infos obtenues lors des tentatives)
+
+    lettres_possibles = dict()
+    for i in range(taille_instanciation, taille_mot):
+        lettres_possibles[i] = set()
+
+    check_forward(taille_instanciation, taille_mot, all_lettres_restantes, dico_de_travail, lettres_possibles)
+    
+    lettres_restantes = copy.copy(all_lettres_restantes[taille_instanciation])
+
+    for i in range(taille_instanciation, taille_mot):
+        lettres_restantes = copy.copy(all_lettres_restantes[i])
+        for lettre in lettres_restantes:
+            if lettre not in lettres_possibles[i]:
+                all_lettres_restantes[i].remove(lettre)
+            
+
+def check_forward(var, taille_mot, all_lettres_restantes, trie_partiel, lettres_possibles):
+
+    if var == taille_mot:
+        return
+
+    for k in trie_partiel.keys():
+        lettres_possibles[var].add(k)
+
+    lettres_restantes = copy.copy(all_lettres_restantes[var])
+
+    # pour chaque lettre possible pour la variable courante, on ajoute tous les successeurs
+    for lettre in lettres_restantes:
+        if lettre in trie_partiel:
+            check_forward(var+1, taille_mot, all_lettres_restantes, trie_partiel[lettre], lettres_possibles)
+
+
+def full_look_ahead():
     pass
 
+    
 
+#### OLD ####
+
+# full lookahead ?
+# def forward_checking(instanciation_partielle, taille_mot, all_lettres_restantes, tentatives, trie):
+    
+#     taille_instanciation = len(instanciation_partielle)
+
+#     dico_de_travail = trie[taille_mot]
+
+#     # On se positionne au bon niveau du Trie
+#     for lettre in instanciation_partielle:
+#         if lettre in dico_de_travail:
+#             dico_de_travail = dico_de_travail[lettre]
+
+#     # On met à jour le domaine de chaque variable qui n'est pas encore instanciée
+#     # (Toutes les variables sont liées entre elles par le dictionnaire et les infos obtenues lors des tentatives)
+#     for i in range(taille_instanciation, taille_instanciation+1):
+
+#         lettres_restantes = copy.copy(all_lettres_restantes[i])
+
+#         for lettre in lettres_restantes:
+#             if lettre not in dico_de_travail and lettre in all_lettres_restantes[i]:
+#                 all_lettres_restantes[i].remove(lettre)
+#                 #print("i:", i, "lettre", lettre)
+#             # else:#
+#             #     forward_checking(instanciation_partielle+[lettre], taille_mot, all_lettres_restantes, tentatives, trie)

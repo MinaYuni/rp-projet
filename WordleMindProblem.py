@@ -52,7 +52,7 @@ class WordleMindProblem:
                 # si la taille du mot courant est celle du mot secret
                 if indice_var == self.taille_mot:
                     # si le mot existe et s'il est compatible
-                    if csp.verifie_consistance_globale(instanciation_courante, [], self.dictionnaire):
+                    if csp.verifie_consistance_globale(instanciation_courante, self.tentatives, self.dictionnaire):
 
                         # fait une tentative avec l'instanciation courante
                         fin, feedback = self.test_tentative(instanciation_courante, verbose)
@@ -76,9 +76,9 @@ class WordleMindProblem:
 
         return self.nb_tentatives
 
-    def resolution_par_CSP_A2(self, verbose=False):
+    def resolution_par_CSP_A1_trie(self, nom_fichier, verbose=False):
         """
-        Fonction qui fait la résolution de Wordle Mind en CSP par Forward Checking (FC).
+        Fonction qui fait la résolution de Wordle Mind en CSP par Retour Arrière Chronologique (RAC).
 
         :param verbose: si on veut l'affichage des tentatives
         :type verbose: bool
@@ -86,7 +86,8 @@ class WordleMindProblem:
         :return: nombre de tentatives faites
         :rtype: int
         """
-        # TODO
+        dictionnaire = utils.lire_dictionnaire_trie(nom_fichier)
+
         fin = False  # flag pour savoir quand le jeu se termine
         indice_var = 0  # indice de la variable du csp (lettre du mot)
         instanciation_courante = []  # instanciation courante (list[str])
@@ -106,7 +107,7 @@ class WordleMindProblem:
                 # si la taille du mot courant est celle du mot secret
                 if indice_var == self.taille_mot:
                     # si le mot existe et s'il est compatible
-                    if csp.verifie_consistance_globale(instanciation_courante, [], self.dictionnaire):
+                    if csp.verifie_consistance_globale_trie(instanciation_courante, self.tentatives, dictionnaire):
 
                         # fait une tentative avec l'instanciation courante
                         fin, feedback = self.test_tentative(instanciation_courante, verbose)
@@ -125,6 +126,73 @@ class WordleMindProblem:
 
             else:  # sinon backtracking
                 all_lettres_restantes[indice_var] = copy.copy(self.domaines[indice_var])
+                indice_var -= 1
+                instanciation_courante = instanciation_courante[:indice_var]
+
+        return self.nb_tentatives
+
+    def resolution_par_CSP_A2(self, nom_fichier, verbose=False):
+        """
+        Fonction qui fait la résolution de Wordle Mind en CSP par Forward Checking (FC).
+
+        :param verbose: si on veut l'affichage des tentatives
+        :type verbose: bool
+
+        :return: nombre de tentatives faites
+        :rtype: int
+        """
+        
+        dictionnaire = utils.lire_dictionnaire_trie(nom_fichier)
+
+        fin = False  # flag pour savoir quand le jeu se termine
+        indice_var = 0  # indice de la variable du csp (lettre du mot)
+        instanciation_courante = []  # instanciation courante (list[str])
+        all_lettres_restantes = copy.deepcopy(self.domaines)  # dictionnaire des lettres restantes pour chaque variable
+
+        # tant qu'on a pas fini (trouvé le mot secret)
+        while not fin:
+
+            if indice_var < 0:
+                print("Le mot secret n'existe pas dans le dictionnaire.")
+
+            # réussite de l'instanciation, lettres restantes pour la variable courante, instanciation courante
+            reussite, lettres_restantes, instanciation_courante \
+                = csp.instancier_variable(all_lettres_restantes[indice_var], instanciation_courante)
+
+            # print("reussite:", reussite, "| var:", indice_var, "| inst:", instanciation_courante)
+            # print("all:", all_lettres_restantes)
+
+            # si l'instanciation de la variable courante a réussi
+            if reussite:
+                all_lettres_restantes[indice_var] = lettres_restantes
+                indice_var += 1  # variable suivante
+
+                # si la taille du mot courant est celle du mot secret
+                if indice_var == self.taille_mot:
+                    # si le mot existe et s'il est compatible
+                    if csp.verifie_consistance_globale_trie(instanciation_courante, self.tentatives, dictionnaire):
+
+                        # fait une tentative avec l'instanciation courante
+                        fin, feedback = self.test_tentative(instanciation_courante, verbose)
+
+                        # si on a trouvé le mot secret, alors on s'arrête et on renvoie le nombre de tentatives faites
+                        if fin:
+                            return self.nb_tentatives
+                        else:  # sinon on reste sur la même variable
+                            # met à jour la liste des lettres restantes en fonction de la mise à jour des domaines
+                            utils.reduire_domaines(instanciation_courante, feedback, all_lettres_restantes)
+                            indice_var -= 1
+                            instanciation_courante = instanciation_courante[:indice_var]
+                    else:  # sinon on reste sur la même variable
+                        indice_var -= 1
+                        instanciation_courante = instanciation_courante[:indice_var]
+                else:
+                    # print("here")
+                    csp.forward_checking(instanciation_courante, self.taille_mot, all_lettres_restantes, self.tentatives, dictionnaire)
+
+            else:  # sinon backtracking
+                for i in range(indice_var, self.taille_mot):
+                    all_lettres_restantes[i] = copy.copy(self.domaines[i])
                 indice_var -= 1
                 instanciation_courante = instanciation_courante[:indice_var]
 
