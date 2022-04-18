@@ -196,7 +196,7 @@ if __name__ == "__main__":
     maxsize = 5         # taille max de l'ensemble E
     maxgen = 20         # nombre max de générations
     taille_min = 2      # taille minimale du mot secret
-    taille_max = 3      # taille maximale du mot secret
+    taille_max = 8      # taille maximale du mot secret
 
     # liste des tailles voulues pour le mot secret
     liste_tailles = [i for i in range(taille_min, taille_max + 1)]

@@ -1,3 +1,4 @@
+import itertools
 import string
 import collections
 import random
@@ -126,11 +127,12 @@ def enlever_lettres_correctes(mot_actuel, proposition):
     :rtype: (str, str)
     """
 
-    actuel = [a for (a, b) in zip(mot_actuel, proposition) if a != b]
-    guess = [b for (a, b) in zip(mot_actuel, proposition) if a != b]
+    actuel = [a for (a, b) in itertools.zip_longest(mot_actuel, proposition) if a != b or b == None]
+    guess = [b for (a, b) in itertools.zip_longest(mot_actuel, proposition) if a != b]
 
     # transformer la liste de string en une chaine de caractère
     actuel = ''.join(map(str, actuel))
+    guess = filter(None, guess) # retire des "None" éventuellement ajoutés lors du zip
     guess = ''.join(map(str, guess))
 
     return actuel, guess
@@ -152,7 +154,7 @@ def recuperer_nb_lettres_proches(mot_actuel, proposition):
 
     # enlever les lettres correctes pour éviter de les compter deux fois
     mot_actuel, proposition = enlever_lettres_correctes(mot_actuel, proposition)
-
+    print("inside:", mot_actuel, proposition)
     # nombre de lettres proches (mal placées)
     nb_lettres_proches = 0
     # pour chaque lettre du mot proposé
