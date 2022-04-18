@@ -68,37 +68,42 @@ if __name__ == "__main__":
 
     fig, axs = plt.subplots(1, 2, figsize=(18, 8))
 
-    # print("----- csp_fc -----")
-    #
-    # csp_fc_path = "data/csp_fc/"
-    # csp_fc_essais, csp_fc_tps = recuperer_donnees(csp_fc_path)
-    #
-    # axs[0].plot(liste_tailles, csp_fc_essais, label="csp_fc")
-    # axs[1].plot(liste_tailles, csp_fc_tps, label="csp_fc")
-    #
-    # print("----- csp_opt -----")
-    #
-    # csp_opt_path = "data/csp_opt/"
-    # csp_opt_essais, csp_opt_tps = recuperer_donnees(csp_opt_path)
-    #
-    # axs[0].plot(liste_tailles, csp_opt_essais, label="csp_opt")
-    # axs[1].plot(liste_tailles, csp_opt_tps, label="csp_opt")
-    #
-    # print("----- ag -----")
-    #
-    # cag_path = "data/ag/"
-    # ag_essais, ag_tps = recuperer_donnees(csp_ag_path)
-    #
-    # axs[0].plot(liste_tailles, ag_essais, label="ag")
-    # axs[1].plot(liste_tailles, ag_tps, label="ag")
+    print("----- csp_fc -----")
+
+    csp_fc_path = "data/csp_fc/"
+    csp_fc_essais, csp_fc_tps = recuperer_donnees(csp_fc_path)
+
+    axs[0].plot(liste_tailles, csp_fc_essais, label="csp_fc")
+    axs[1].plot(liste_tailles, csp_fc_tps, label="csp_fc")
+
+    print("----- csp_opt -----")
+
+    csp_opt_path = "data/csp_opt/"
+    csp_opt_essais, csp_opt_tps = recuperer_donnees(csp_opt_path)
+
+    axs[0].plot(liste_tailles, csp_opt_essais, label="csp_opt")
+    axs[1].plot(liste_tailles, csp_opt_tps, label="csp_opt")
+
+    print("----- ag -----")
+
+    cag_path = "data/ag/"
+    ag_essais, ag_tps = recuperer_donnees(cag_path)
+
+    axs[0].plot(liste_tailles, ag_essais, label="ag")
+    axs[1].plot(liste_tailles, ag_tps, label="ag")
 
     print("----- csp_rac -----")
+
+    taille_min_rac = 2  # taille minimale du mot secret
+    taille_max_rac = 5  # taille maximale du mot secret
+    # liste des tailles voulues pour le mot secret
+    liste_tailles_rac = [i for i in range(taille_min_rac, taille_max_rac + 1)]
 
     csp_rac_path = "data/csp_rac/"
     csp_rac_essais, csp_rac_tps = recuperer_donnees(csp_rac_path)
 
-    axs[0].plot(liste_tailles, csp_rac_essais, label="csp_rac")
-    axs[1].plot(liste_tailles, csp_rac_tps, label="csp_rac")
+    axs[0].plot(liste_tailles_rac, csp_rac_essais, label="csp_rac")
+    axs[1].plot(liste_tailles_rac, csp_rac_tps, label="csp_rac")
 
     print("===== PLOT =====")
 
@@ -114,7 +119,7 @@ if __name__ == "__main__":
     # plt.show()
 
     # path = "./data/n{}_min{}_max{}".format(nb_tours, liste_tailles[0], liste_tailles[-1])
-    path = "./data/n{}-ag-csp_fc-csp_opt".format(nb_tours)
+    path = "./data/n{}-ag-csp_rac-fc-opt".format(nb_tours)
     plt.savefig(path)
 
     print("===== FIN =====")
