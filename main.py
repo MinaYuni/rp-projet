@@ -9,6 +9,7 @@ if __name__ == "__main__":
 
     file_path = "./dico.txt"
     dictionnaire = utils.lire_dictionnaire(file_path)
+    trie = utils.lire_dictionnaire_trie(file_path)
 
     # toutes les tailles de mot possibles
     liste_tailles = list(dictionnaire.keys())
@@ -21,37 +22,37 @@ if __name__ == "__main__":
 
     print("\n----- RAC -----\n")
     # initialisation du Wordle Mind
-    WMP = WordleMindProblem(mot_secret, dictionnaire)
+    WMP = WordleMindProblem(mot_secret, dictionnaire, trie)
 
     temps_debut_rac = time.perf_counter()
-    nb_tentatives_rac = WMP.resolution_par_CSP_A1(verbose=True)
+    nb_tentatives_rac = WMP.resolution_par_CSP(type_dico="dict", version="A1", verbose=True)
     temps_fin_rac = time.perf_counter()
 
     temps_total_rac = temps_fin_rac - temps_debut_rac
 
     print("\n----- RAC avec Trie -----\n")
     # initialisation du Wordle Mind
-    WMP = WordleMindProblem(mot_secret, dictionnaire)
+    WMP = WordleMindProblem(mot_secret, dictionnaire, trie)
 
     temps_debut_rac_trie = time.perf_counter()
-    nb_tentatives_rac_trie = WMP.resolution_par_CSP_A1_trie(file_path, verbose=True)
+    nb_tentatives_rac_trie = WMP.resolution_par_CSP(type_dico="trie", version="A1", verbose=True)
     temps_fin_rac_trie = time.perf_counter()
 
     temps_total_rac_trie = temps_fin_rac_trie - temps_debut_rac_trie
 
     print("\n----- RAC avec forward-checking -----\n")
     # initialisation du Wordle Mind
-    WMP = WordleMindProblem(mot_secret, dictionnaire)
+    WMP = WordleMindProblem(mot_secret, dictionnaire, trie)
 
     temps_debut_fc = time.perf_counter()
-    nb_tentatives_fc = WMP.resolution_par_CSP_A2(file_path, verbose=True)
+    nb_tentatives_fc = WMP.resolution_par_CSP(type_dico="trie", version="A2", verbose=True)
     temps_fin_fc = time.perf_counter()
 
     temps_total_fc = temps_fin_fc - temps_debut_fc
 
     print("\n----- CSP optimisé -----\n")
     # initialisation du Wordle Mind
-    WMP = WordleMindProblem(mot_secret, dictionnaire)
+    WMP = WordleMindProblem(mot_secret, dictionnaire, trie)
 
     temps_debut_csp_opt = time.perf_counter()
     nb_tentatives_csp_opt = WMP.resolution_par_CSP_opt(verbose=True)
@@ -61,7 +62,7 @@ if __name__ == "__main__":
 
     print("\n----- Algo Génétique -----\n")
     # initialisation du Wordle Mind
-    WMP = WordleMindProblem(mot_secret, dictionnaire)
+    WMP = WordleMindProblem(mot_secret, dictionnaire, trie)
 
     # paramètres pour l'algo génétique
     maxsize = 5  # taille max de l'ensemble E

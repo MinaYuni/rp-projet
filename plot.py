@@ -21,7 +21,7 @@ def liste_mot_en_str(mot_list):
     return mot_str
 
 
-def lancer_algo(mot_secret, dictionnaire, nom_algo, maxsize=5, maxgen=20, affichage=False):
+def lancer_algo(mot_secret, dictionnaire, trie, nom_algo, maxsize=5, maxgen=20, affichage=False):
     """
     Fonction qui lance un algorithme donné en paramètre et renvoie le nombre de tentatives faites et le temps d'exécution.
     :param mot_secret: le mot secret
@@ -41,12 +41,12 @@ def lancer_algo(mot_secret, dictionnaire, nom_algo, maxsize=5, maxgen=20, affich
     """
 
     # initialisation du Wordle Mind
-    WMP = WordleMindProblem(mot_secret, dictionnaire)
+    WMP = WordleMindProblem(mot_secret, dictionnaire, trie)
 
     # choix de l'algorithme
     tps_debut = time.perf_counter()
     if nom_algo == "csp_rac":
-        nb_essais = WMP.resolution_par_CSP_A1(verbose=affichage)
+        nb_essais = WMP.resolution_par_CSP(type_dico="dict", version="A1", verbose=affichage)
     elif nom_algo == "csp_opt":
         nb_essais = WMP.resolution_par_CSP_opt(verbose=affichage)
     elif nom_algo == "ag":
@@ -61,7 +61,7 @@ def lancer_algo(mot_secret, dictionnaire, nom_algo, maxsize=5, maxgen=20, affich
     return nb_essais, tps_total
 
 
-def lancer_all_algo(liste_tailles, liste_algo, nb_tours, maxsize=5, maxgen=20, affichage=False):
+def lancer_all_algo(liste_tailles, liste_algo, nb_tours, dictionnaire, trie, maxsize=5, maxgen=20, affichage=False):
     """
     Fonction qui lance tous les algorithmes de la liste et renvoie le nombre d'essais moyen par taille et par algorithme,
     ainsi que le temps moyen d'exécution.
@@ -103,7 +103,7 @@ def lancer_all_algo(liste_tailles, liste_algo, nb_tours, maxsize=5, maxgen=20, a
 
             # nb_tours exécutions des algorithmes
             for i in range(nb_tours):
-                nb_essais, tps_total = lancer_algo(mot_secret, dictionnaire, algo, maxsize=maxsize, maxgen=maxgen,
+                nb_essais, tps_total = lancer_algo(mot_secret, dictionnaire, trie, algo, maxsize=maxsize, maxgen=maxgen,
                                                    affichage=affichage)
                 liste_nb_essais.append(nb_essais)
                 liste_tps.append(tps_total)
@@ -189,6 +189,7 @@ def afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donne
 if __name__ == "__main__":
     file_path = "./dico.txt"
     dictionnaire = utils.lire_dictionnaire(file_path)  # lecture du dictionnaire
+    trie = utils.lire_dictionnaire_trie(file_path)
 
     affichage = False   # si on veut l'affichage des tentatives
     nb_tours = 3        # nombre de fois qu'on exécute les algorithmes
@@ -207,7 +208,7 @@ if __name__ == "__main__":
         print("========== Bienvenue dans Wordle Mind ========== \n")
 
     # exécuter tous les algorithmes
-    liste_all_essais, liste_all_tps = lancer_all_algo(liste_tailles, liste_algo, nb_tours, maxsize=maxsize, maxgen=maxgen, affichage=affichage)
+    liste_all_essais, liste_all_tps = lancer_all_algo(liste_tailles, liste_algo, nb_tours, dictionnaire, trie, maxsize=maxsize, maxgen=maxgen, affichage=affichage)
 
     # récupérer les données pour plot
     liste_donnees_essais, liste_donnees_tps = recuperer_donnees_pour_graphe(liste_tailles, liste_algo, liste_all_essais, liste_all_tps)

@@ -91,17 +91,19 @@ def verifie_consistance_locale(instanciation, contraintes):
     return True
 
 
-def verifie_consistance_globale(instanciation, tentatives, dictionnaire):
+def verifie_consistance_globale(instanciation, tentatives, dictionnaire, type_dico="trie"):
     """
     Fonction qui vérifie la consistance globale de l'instanciation donnée avec les contraintes et le dictionnaire.
 
     :param instanciation: une instanciation
     :param tentatives: liste des tentatives précédentes
     :param dictionnaire: dictionnaire de mots
+    :param type_dico: "dict" ou "trie"
 
     :type instanciation: list[str]
     :type tentatives: list[(list[str], Feedback)]
     :type dictionnaire: dict[int, list[lits[str]]]
+    :type type_dico: str
 
     :return: vrai si consistance globale, faux sinon
     :rtype: bool
@@ -112,33 +114,27 @@ def verifie_consistance_globale(instanciation, tentatives, dictionnaire):
         return False
 
     # teste l'existence du mot dans le dictionnaire
-    taille_mot = len(instanciation)
-    liste_mots = dictionnaire[taille_mot]
+    if type_dico == "dict":
 
-    for m in liste_mots:
-        if m == instanciation:
-            return True
+        taille_mot = len(instanciation)
+        liste_mots = dictionnaire[taille_mot]
 
-    # TODO other constraints
-    return False
+        for m in liste_mots:
+            if m == instanciation:
+                return True
 
-
-def verifie_consistance_globale_trie(instanciation, tentatives, trie):
-    """
-    """
-
-    # teste la compatibilité du mot avec les tentatives précédentes
-    if utils.get_nb_incompatibilites(instanciation, tentatives) != 0:
         return False
 
-    # teste l'existence du mot dans le dictionnaire
-    existe = utils.present_dans_trie(instanciation, trie)
-    if not existe:
-        return False
+    elif type_dico == "trie":
+        
+        existe = utils.present_dans_trie(instanciation, dictionnaire)
+        
+        if not existe:
+            return False
 
-    # TODO other constraints
-    return True
+        return True
 
+    print("Type du dictionnaire inconnu.")
 
 def instancier_variable(lettres_restantes, instanciation_partielle):
     """
