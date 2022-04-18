@@ -48,14 +48,22 @@ def lancer_algo(mot_secret, dictionnaire, trie, nom_algo, maxsize=5, maxgen=20, 
     # choix de l'algorithme
     tps_debut = time.perf_counter()
     if nom_algo == "csp_rac":
+        if affichage:
+            print("----- CSP RAC -----")
         nb_essais = WMP.resolution_par_CSP(type_dico="dict", version="A1", verbose=affichage)
     elif nom_algo == "csp_rac_trie":
         nb_essais = WMP.resolution_par_CSP(type_dico="trie", version="A1", verbose=affichage)
     elif nom_algo == "csp_fc":
+        if affichage:
+            print("----- CSP FC -----")
         nb_essais = WMP.resolution_par_CSP(type_dico="trie", version="A2", verbose=affichage)
     elif nom_algo == "csp_opt":
+        if affichage:
+            print("----- CSP OPT -----")
         nb_essais = WMP.resolution_par_CSP_opt(verbose=affichage)
     elif nom_algo == "ag":
+        if affichage:
+            print("----- Algo Génétique -----")
         nb_essais = WMP.resolution_par_algo_genetique(maxsize, maxgen, verbose=affichage)
     else:
         nb_essais = -1
@@ -111,7 +119,7 @@ def lancer_all_algo(liste_tailles, liste_algo, nb_tours, dictionnaire, trie, dos
                 mot_secret = utils.generer_mot_secret(dictionnaire, n=taille)
 
                 if affichage:
-                    print("mot secret:\t{}".format(liste_mot_en_str(mot_secret).upper()))
+                    print("\nmot secret:\t{}".format(liste_mot_en_str(mot_secret).upper()))
 
                 nb_essais, tps_total = lancer_algo(mot_secret, dictionnaire, trie, algo, maxsize=maxsize, maxgen=maxgen,
                                                    affichage=affichage)
@@ -165,7 +173,7 @@ def recuperer_donnees_pour_graphe(liste_tailles, liste_algo, liste_all_essais, l
     return liste_donnees_essais, liste_donnees_tps
 
 
-def afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donnees_tps):
+def afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donnees_tps, nb_tours, taille_min, taille_max):
     """
     Fonction qui plot le nombre d'essais moyen et le temps moyen d'exécution de chaque algorithme en fonction de la taille du mot secret.
     :param liste_tailles: liste des tailles du mot secret
@@ -179,7 +187,7 @@ def afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donne
     :return: None
     """
 
-    fig, axs = plt.subplots(2, figsize=(10, 10))
+    fig, axs = plt.subplots(1, 2, figsize=(18, 8))
 
     for i, algo in enumerate(liste_algo):
         axs[0].plot(liste_tailles, liste_donnees_essais[i], label=algo)
@@ -194,7 +202,11 @@ def afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donne
     axs[1].set_ylabel("temps moyen")
 
     plt.legend()
-    plt.show()
+    # plt.show()
+    path = "./data/n{}_min{}_max{}".format(nb_tours, taille_min, taille_max)
+    plt.savefig(path)
+
+    print("\nFile save to: {}".format(path))
 
 
 if __name__ == "__main__":
@@ -214,7 +226,7 @@ if __name__ == "__main__":
 
     print("Résultats dans : "+dossier)
 
-    affichage = False   # si on veut l'affichage des tentatives
+    affichage = True   # si on veut l'affichage des tentatives
     
     nb_tours = 20        # nombre de fois qu'on exécute les algorithmes
     taille_min = 2      # taille minimale du mot secret
@@ -230,7 +242,7 @@ if __name__ == "__main__":
     liste_algo = ["csp_rac"]
 
     if affichage:
-        print("========== Bienvenue dans Wordle Mind ========== \n")
+        print("========== Bienvenue dans Wordle Mind ==========")
 
     # exécuter tous les algorithmes
     liste_all_essais, liste_all_tps = lancer_all_algo(liste_tailles, liste_algo, nb_tours, dictionnaire, trie, dossier, maxsize=maxsize, maxgen=maxgen, affichage=affichage)
@@ -239,4 +251,4 @@ if __name__ == "__main__":
     liste_donnees_essais, liste_donnees_tps = recuperer_donnees_pour_graphe(liste_tailles, liste_algo, liste_all_essais, liste_all_tps)
 
     # plot
-    afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donnees_tps)
+    afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donnees_tps, nb_tours, taille_min, taille_max)
