@@ -154,7 +154,6 @@ def recuperer_nb_lettres_proches(mot_actuel, proposition):
 
     # enlever les lettres correctes pour éviter de les compter deux fois
     mot_actuel, proposition = enlever_lettres_correctes(mot_actuel, proposition)
-    print("inside:", mot_actuel, proposition)
     # nombre de lettres proches (mal placées)
     nb_lettres_proches = 0
     # pour chaque lettre du mot proposé

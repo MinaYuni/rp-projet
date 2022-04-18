@@ -65,14 +65,13 @@ class WordleMindProblem:
             # réussite de l'instanciation, lettres restantes pour la variable courante, instanciation courante
             reussite, lettres_restantes, instanciation_courante \
                 = csp.instancier_variable(all_lettres_restantes[indice_var], instanciation_courante)
-            print("reussite:", reussite, "| var:", indice_var, "| inst:", instanciation_courante)
-            print("all:", all_lettres_restantes)
+            # print("reussite:", reussite, "| var:", indice_var, "| inst:", instanciation_courante)
+            # print("all:", all_lettres_restantes)
 
             # si l'instanciation de la variable courante a réussi
             if reussite:
                 all_lettres_restantes[indice_var] = lettres_restantes
                 indice_var += 1  # variable suivante
-                print(1)
                 # si la taille du mot courant est celle du mot secret
                 if indice_var == self.taille_mot:
                     # si le mot existe et s'il est compatible
@@ -88,20 +87,17 @@ class WordleMindProblem:
                             # met à jour la liste des lettres restantes en fonction de la mise à jour des domaines
                             utils.reduire_domaines(instanciation_courante, feedback, all_lettres_restantes)
                             continuer_avec_var = True
-                            print(2)
+
                     else:  # sinon on reste sur la même variable
                         continuer_avec_var = True
-                        print(3)
                 else:
                     if version == "A2":
                         consistant = csp.forward_checking(instanciation_courante, self.taille_mot, all_lettres_restantes, self.tentatives, dictionnaire)
                         if not consistant:
                             backtrack = True
-                            print(4)
 
             else:  # sinon backtracking
                 backtrack = True
-                print(5)
 
             if continuer_avec_var:
                 indice_var -= 1

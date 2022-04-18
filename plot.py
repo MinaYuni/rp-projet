@@ -47,6 +47,8 @@ def lancer_algo(mot_secret, dictionnaire, trie, nom_algo, maxsize=5, maxgen=20, 
     tps_debut = time.perf_counter()
     if nom_algo == "csp_rac":
         nb_essais = WMP.resolution_par_CSP(type_dico="dict", version="A1", verbose=affichage)
+    elif nom_algo == "csp_fc":
+        nb_essais = WMP.resolution_par_CSP(type_dico="trie", version="A2", verbose=affichage)
     elif nom_algo == "csp_opt":
         nb_essais = WMP.resolution_par_CSP_opt(verbose=affichage)
     elif nom_algo == "ag":
@@ -192,17 +194,19 @@ if __name__ == "__main__":
     trie = utils.lire_dictionnaire_trie(file_path)
 
     affichage = False   # si on veut l'affichage des tentatives
-    nb_tours = 3        # nombre de fois qu'on exécute les algorithmes
+    
+    nb_tours = 20        # nombre de fois qu'on exécute les algorithmes
+    taille_min = 2      # taille minimale du mot secret
+    taille_max = 5      # taille maximale du mot secret
+
     maxsize = 5         # taille max de l'ensemble E
     maxgen = 20         # nombre max de générations
-    taille_min = 2      # taille minimale du mot secret
-    taille_max = 8      # taille maximale du mot secret
 
     # liste des tailles voulues pour le mot secret
     liste_tailles = [i for i in range(taille_min, taille_max + 1)]
     # nom de tous les algorithmes
     # liste_algo = ["csp_rac", "csp_fc", "csp_opt", "ag", "ag_opt"]
-    liste_algo = ["csp_rac", "csp_opt", "ag"]
+    liste_algo = ["csp_rac", "csp_fc", "csp_opt"]
 
     if affichage:
         print("========== Bienvenue dans Wordle Mind ========== \n")

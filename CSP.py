@@ -208,27 +208,24 @@ def forward_checking(instanciation_partielle, taille_mot, all_lettres_restantes,
         for lettre in lettres_restantes:
             if lettre not in lettres_possibles[i]:
                 all_lettres_restantes[i].remove(lettre)
-                #print("remove1:", lettre)
 
     # Etape 2 : forward-checking sur les contraintes induites par les tentatives précédentes
 
     for tentative, (correctes, proches) in tentatives:
-        print("tentative:", tentative, "| c:", correctes, "| p:", proches)
+
         feedback = utils.recuperer_feedback(tentative, instanciation_partielle)
         inst_partielle_correctes, inst_partielle_proches = feedback
-        print("ic:", inst_partielle_correctes, "| ip:", inst_partielle_proches)
+
         correctes_manquantes = correctes - inst_partielle_correctes
         # if correctes_manquantes == 0: 
         #     for i in range(taille_instanciation, taille_mot): # parmi les variables restantes
         #         if tentative[i] in all_lettres_restantes[i]:
         #             all_lettres_restantes[i].remove(tentative[i])
-        #             print("remove2:", tentative[i])
         if correctes_manquantes > 0 :
             for i in range(taille_instanciation, taille_mot): # parmi les variables restantes
                 if tentative[i] in all_lettres_restantes[i]:
                     correctes_manquantes -= 1
             if correctes_manquantes > 0:
-                print("here1:", tentative)
                 return False
         # correctes_manquantes ne peut pas être négatif normalement car on n'instancie qu'une lettre à la fois
 
@@ -238,7 +235,6 @@ def forward_checking(instanciation_partielle, taille_mot, all_lettres_restantes,
         #         for j in range(taille_instanciation, taille_mot): # parmi les variables restantes
         #             if i != j and tentative[i] in all_lettres_restantes[j]:
         #                 all_lettres_restantes[j].remove(tentative[i])
-        #                 print("remove3:", tentative[i], "from var:", j, "| tent:", tentative)
         if proches_manquantes > 0 :
             for i in range(taille_mot): # parmi les lettres restantes dans la tentative
                 for j in range(taille_instanciation, taille_mot): # parmi les variables restantes
@@ -246,7 +242,6 @@ def forward_checking(instanciation_partielle, taille_mot, all_lettres_restantes,
                         proches_manquantes -= 1
                         break
             if proches_manquantes > 0:
-                print("here2:", tentative)
                 return False
 
     return True
