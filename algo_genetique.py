@@ -276,5 +276,6 @@ def engendrer_ens(tentative_precedente, dictionnaire, tentatives, maxsize, maxge
     if total_time >= timeout and taille_ens == 0:
         print("La méthode a échouée (l'ensemble E est vide après {} s).".format(timeout))
         # raise TimeoutError()
+        return []
 
     return ens
