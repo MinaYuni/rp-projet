@@ -1,7 +1,9 @@
-import time
 import copy
+import datetime
 import matplotlib.pyplot as plt
+import os
 from statistics import mean
+import time
 
 import utils
 from WordleMindProblem import WordleMindProblem
@@ -47,6 +49,8 @@ def lancer_algo(mot_secret, dictionnaire, trie, nom_algo, maxsize=5, maxgen=20, 
     tps_debut = time.perf_counter()
     if nom_algo == "csp_rac":
         nb_essais = WMP.resolution_par_CSP(type_dico="dict", version="A1", verbose=affichage)
+    elif nom_algo == "csp_rac_trie":
+        nb_essais = WMP.resolution_par_CSP(type_dico="trie", version="A1", verbose=affichage)
     elif nom_algo == "csp_fc":
         nb_essais = WMP.resolution_par_CSP(type_dico="trie", version="A2", verbose=affichage)
     elif nom_algo == "csp_opt":
@@ -63,7 +67,7 @@ def lancer_algo(mot_secret, dictionnaire, trie, nom_algo, maxsize=5, maxgen=20, 
     return nb_essais, tps_total
 
 
-def lancer_all_algo(liste_tailles, liste_algo, nb_tours, dictionnaire, trie, maxsize=5, maxgen=20, affichage=False):
+def lancer_all_algo(liste_tailles, liste_algo, nb_tours, dictionnaire, trie, dossier, maxsize=5, maxgen=20, affichage=False):
     """
     Fonction qui lance tous les algorithmes de la liste et renvoie le nombre d'essais moyen par taille et par algorithme,
     ainsi que le temps moyen d'exécution.
@@ -89,11 +93,6 @@ def lancer_all_algo(liste_tailles, liste_algo, nb_tours, dictionnaire, trie, max
 
     # pour chaque taille du mot secret
     for taille in liste_tailles:
-        # initialisation du mot secret
-        mot_secret = utils.generer_mot_secret(dictionnaire, n=taille)
-
-        if affichage:
-            print("mot secret:\t{}".format(liste_mot_en_str(mot_secret).upper()))
 
         liste_moy_essais = []
         liste_moy_tps = []
@@ -103,12 +102,22 @@ def lancer_all_algo(liste_tailles, liste_algo, nb_tours, dictionnaire, trie, max
             liste_nb_essais = []
             liste_tps = []
 
+            f = open(dossier+algo+"_"+str(taille)+".txt", "a")
+
             # nb_tours exécutions des algorithmes
             for i in range(nb_tours):
+
+                # initialisation du mot secret
+                mot_secret = utils.generer_mot_secret(dictionnaire, n=taille)
+
+                if affichage:
+                    print("mot secret:\t{}".format(liste_mot_en_str(mot_secret).upper()))
+
                 nb_essais, tps_total = lancer_algo(mot_secret, dictionnaire, trie, algo, maxsize=maxsize, maxgen=maxgen,
                                                    affichage=affichage)
                 liste_nb_essais.append(nb_essais)
                 liste_tps.append(tps_total)
+                f.write(mot_secret+","+str(nb_essais)+","+str(tps_total)+"\n")
 
             liste_moy_essais.append(mean(liste_nb_essais))
             liste_moy_tps.append(mean(liste_tps))
@@ -189,9 +198,21 @@ def afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donne
 
 
 if __name__ == "__main__":
+
     file_path = "./dico.txt"
     dictionnaire = utils.lire_dictionnaire(file_path)  # lecture du dictionnaire
     trie = utils.lire_dictionnaire_trie(file_path)
+
+    d = datetime.datetime.today()
+    nom_run = d.strftime("%Y_%m_%d-%H-%M-%S")
+    dossier = "./test_data/"+nom_run+"/"
+    
+    try:
+        os.makedirs(dossier)
+    except OSError:
+        pass
+
+    print("Résultats dans : "+dossier)
 
     affichage = False   # si on veut l'affichage des tentatives
     
@@ -206,13 +227,13 @@ if __name__ == "__main__":
     liste_tailles = [i for i in range(taille_min, taille_max + 1)]
     # nom de tous les algorithmes
     # liste_algo = ["csp_rac", "csp_fc", "csp_opt", "ag", "ag_opt"]
-    liste_algo = ["csp_rac", "csp_fc", "csp_opt"]
+    liste_algo = ["csp_rac"]
 
     if affichage:
         print("========== Bienvenue dans Wordle Mind ========== \n")
 
     # exécuter tous les algorithmes
-    liste_all_essais, liste_all_tps = lancer_all_algo(liste_tailles, liste_algo, nb_tours, dictionnaire, trie, maxsize=maxsize, maxgen=maxgen, affichage=affichage)
+    liste_all_essais, liste_all_tps = lancer_all_algo(liste_tailles, liste_algo, nb_tours, dictionnaire, trie, dossier, maxsize=maxsize, maxgen=maxgen, affichage=affichage)
 
     # récupérer les données pour plot
     liste_donnees_essais, liste_donnees_tps = recuperer_donnees_pour_graphe(liste_tailles, liste_algo, liste_all_essais, liste_all_tps)
