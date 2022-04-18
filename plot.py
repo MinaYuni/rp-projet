@@ -125,7 +125,7 @@ def lancer_all_algo(liste_tailles, liste_algo, nb_tours, dictionnaire, trie, dos
                                                    affichage=affichage)
                 liste_nb_essais.append(nb_essais)
                 liste_tps.append(tps_total)
-                f.write(mot_secret+","+str(nb_essais)+","+str(tps_total)+"\n")
+                f.write(str(mot_secret)+","+str(nb_essais)+","+str(tps_total)+"\n")
 
             liste_moy_essais.append(mean(liste_nb_essais))
             liste_moy_tps.append(mean(liste_tps))
@@ -230,7 +230,7 @@ if __name__ == "__main__":
     
     nb_tours = 20        # nombre de fois qu'on exécute les algorithmes
     taille_min = 2      # taille minimale du mot secret
-    taille_max = 5      # taille maximale du mot secret
+    taille_max = 10      # taille maximale du mot secret
 
     maxsize = 5         # taille max de l'ensemble E
     maxgen = 20         # nombre max de générations
@@ -239,7 +239,7 @@ if __name__ == "__main__":
     liste_tailles = [i for i in range(taille_min, taille_max + 1)]
     # nom de tous les algorithmes
     # liste_algo = ["csp_rac", "csp_fc", "csp_opt", "ag", "ag_opt"]
-    liste_algo = ["csp_rac"]
+    liste_algo = ["csp_fc"]
 
     if affichage:
         print("========== Bienvenue dans Wordle Mind ==========")

@@ -1,0 +1,7 @@
+Mot secret : "encore"
+
+CSP RAC:        1793.10829 s pour       4 tentatives
+CSP RAC avec Trie:      989.61022 s pour        4 tentatives
+CSP FC: 0.61927 s pour  4 tentatives
+
+___________________________
