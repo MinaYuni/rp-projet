@@ -30,15 +30,15 @@ if __name__ == "__main__":
 
     # temps_total_rac = temps_fin_rac - temps_debut_rac
 
-    print("\n----- RAC avec Trie -----\n")
-    # initialisation du Wordle Mind
-    WMP = WordleMindProblem(mot_secret, dictionnaire, trie)
+    # print("\n----- RAC avec Trie -----\n")
+    # # initialisation du Wordle Mind
+    # WMP = WordleMindProblem(mot_secret, dictionnaire, trie)
 
-    temps_debut_rac_trie = time.perf_counter()
-    nb_tentatives_rac_trie = WMP.resolution_par_CSP(type_dico="trie", version="A1", verbose=True)
-    temps_fin_rac_trie = time.perf_counter()
+    # temps_debut_rac_trie = time.perf_counter()
+    # nb_tentatives_rac_trie = WMP.resolution_par_CSP(type_dico="trie", version="A1", verbose=True)
+    # temps_fin_rac_trie = time.perf_counter()
 
-    temps_total_rac_trie = temps_fin_rac_trie - temps_debut_rac_trie
+    # temps_total_rac_trie = temps_fin_rac_trie - temps_debut_rac_trie
 
     print("\n----- RAC avec forward-checking -----\n")
     # initialisation du Wordle Mind
@@ -60,27 +60,27 @@ if __name__ == "__main__":
 
     # temps_total_csp_opt = temps_fin_csp_opt - temps_debut_csp_opt
 
-    # print("\n----- Algo Génétique -----\n")
-    # # initialisation du Wordle Mind
-    # WMP = WordleMindProblem(mot_secret, dictionnaire, trie)
+    print("\n----- Algo Génétique -----\n")
+    # initialisation du Wordle Mind
+    WMP = WordleMindProblem(mot_secret, dictionnaire, trie)
 
-    # # paramètres pour l'algo génétique
-    # maxsize = 5  # taille max de l'ensemble E
-    # maxgen = 20  # nombre de générations
+    # paramètres pour l'algo génétique
+    maxsize = 5  # taille max de l'ensemble E
+    maxgen = 20  # nombre de générations
 
-    # temps_debut_ag = time.perf_counter()
-    # nb_tentatives_ag = WMP.resolution_par_algo_genetique(maxsize, maxgen, verbose=True)
-    # temps_fin_ag = time.perf_counter()
+    temps_debut_ag = time.perf_counter()
+    nb_tentatives_ag = WMP.resolution_par_algo_genetique(maxsize, maxgen, verbose=True)
+    temps_fin_ag = time.perf_counter()
 
-    # temps_total_ag = temps_fin_ag - temps_debut_ag
+    temps_total_ag = temps_fin_ag - temps_debut_ag
 
     print("\n----- FIN -----\n")
 
     # print("CSP RAC:\t{:.5f} s pour\t{} tentatives".format(temps_total_rac, nb_tentatives_rac))
-    print("CSP RAC avec Trie:\t{:.5f} s pour\t{} tentatives".format(temps_total_rac_trie, nb_tentatives_rac_trie))
+    # print("CSP RAC avec Trie:\t{:.5f} s pour\t{} tentatives".format(temps_total_rac_trie, nb_tentatives_rac_trie))
     print("CSP FC:\t{:.5f} s pour\t{} tentatives".format(temps_total_fc, nb_tentatives_fc))
     # print("CSP OPT:\t{:.5f} s pour\t{} tentatives".format(temps_total_csp_opt, nb_tentatives_csp_opt))
-    # print("AG:\t\t\t{:.5f} s pour\t{} tentatives".format(temps_total_ag, nb_tentatives_ag))
+    print("AG:\t\t\t{:.5f} s pour\t{} tentatives".format(temps_total_ag, nb_tentatives_ag))
 
 
 

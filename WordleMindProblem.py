@@ -170,7 +170,7 @@ class WordleMindProblem:
         # tant qu'on a pas fini (trouvé le mot secret)
         while not fin:
             # génération de l'ensemble des mots compatibles avec les tentatives précédentes
-            ens = ag.engendrer_ens(mot_choisi, self.dictionnaire, self.tentatives, maxsize, maxgen)
+            ens = ag.engendrer_ens(mot_choisi, self.dictionnaire, self.tentatives, maxsize, maxgen, taille_pop=5, nb_parents=2, proba_mutation_remplacement=0.4, proba_mutation_echange=0.4, proba_mutation_renversement=0.4, proba_croisement=0.4)
 
             if ens:
                 # choix aléatoire du mot parmi cette ensemble
