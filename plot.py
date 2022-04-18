@@ -80,12 +80,14 @@ def lancer_all_algo(liste_tailles, liste_algo, nb_tours, dictionnaire, trie, dos
     Fonction qui lance tous les algorithmes de la liste et renvoie le nombre d'essais moyen par taille et par algorithme,
     ainsi que le temps moyen d'exécution.
     Les listes retournées sont de format : len(liste_tailles) x len(liste_algo)
+
     :param liste_tailles: liste des tailles du mot secret
     :param liste_algo: liste des noms des algorithmes
     :param nb_tours: nombre de fois qu'on lance les algorithmes
     :param maxsize: taille max de l'ensemble E pour l'algorithme génétique
     :param maxgen: nombre max de génération pour l'algorithme génétique
     :param affichage: si on veut l'affichage des tentatives
+
     :type liste_tailles: list[int]
     :type liste_algo: list[str]
     :type nb_tours: int
@@ -110,7 +112,8 @@ def lancer_all_algo(liste_tailles, liste_algo, nb_tours, dictionnaire, trie, dos
             liste_nb_essais = []
             liste_tps = []
 
-            f = open(dossier+algo+"_"+str(taille)+".txt", "a")
+            nom_txt = "{}_n{}_min{}_max{}".format(algo, taille, liste_tailles[0], liste_tailles[-1])
+            f = open(dossier+nom_txt+".txt", "a")
 
             # nb_tours exécutions des algorithmes
             for i in range(nb_tours):
@@ -125,10 +128,17 @@ def lancer_all_algo(liste_tailles, liste_algo, nb_tours, dictionnaire, trie, dos
                                                    affichage=affichage)
                 liste_nb_essais.append(nb_essais)
                 liste_tps.append(tps_total)
+<<<<<<< HEAD
                 f.write(str(mot_secret)+","+str(nb_essais)+","+str(tps_total)+"\n")
+=======
+                ecriture = "{},{},{}\n".format(mot_secret, nb_essais, tps_total)
+                f.write(ecriture)
+>>>>>>> 4c0a0ba61995c1a057e837598c0b22b0d770e6ee
 
             liste_moy_essais.append(mean(liste_nb_essais))
             liste_moy_tps.append(mean(liste_tps))
+
+            f.close()
 
         liste_all_essais.append(liste_moy_essais)
         liste_all_tps.append(liste_moy_tps)
@@ -173,7 +183,7 @@ def recuperer_donnees_pour_graphe(liste_tailles, liste_algo, liste_all_essais, l
     return liste_donnees_essais, liste_donnees_tps
 
 
-def afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donnees_tps, nb_tours, taille_min, taille_max):
+def afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donnees_tps, nb_tours, nom_dossier):
     """
     Fonction qui plot le nombre d'essais moyen et le temps moyen d'exécution de chaque algorithme en fonction de la taille du mot secret.
     :param liste_tailles: liste des tailles du mot secret
@@ -186,6 +196,11 @@ def afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donne
     :type liste_donnees_tps: list[list[float]]
     :return: None
     """
+
+    # récupérer le nom des algo
+    noms_aglo = ""
+    for algo in liste_algo:
+        noms_aglo += algo+"_"
 
     fig, axs = plt.subplots(1, 2, figsize=(18, 8))
 
@@ -203,10 +218,8 @@ def afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donne
 
     plt.legend()
     # plt.show()
-    path = "./data/n{}_min{}_max{}".format(nb_tours, taille_min, taille_max)
+    path = "./{}/n{}_min{}_max{}_{}".format(nom_dossier, nb_tours, liste_tailles[0], liste_tailles[-1], noms_aglo)
     plt.savefig(path)
-
-    print("\nFile save to: {}".format(path))
 
 
 if __name__ == "__main__":
@@ -216,7 +229,7 @@ if __name__ == "__main__":
     trie = utils.lire_dictionnaire_trie(file_path)
 
     d = datetime.datetime.today()
-    nom_run = d.strftime("%Y_%m_%d-%H-%M-%S")
+    nom_run = d.strftime("%Y_%m_%d-%H_%M_%S")
     dossier = "./test_data/"+nom_run+"/"
     
     try:
@@ -229,6 +242,7 @@ if __name__ == "__main__":
     affichage = True   # si on veut l'affichage des tentatives
     
     nb_tours = 20        # nombre de fois qu'on exécute les algorithmes
+
     taille_min = 2      # taille minimale du mot secret
     taille_max = 10      # taille maximale du mot secret
 
@@ -251,4 +265,4 @@ if __name__ == "__main__":
     liste_donnees_essais, liste_donnees_tps = recuperer_donnees_pour_graphe(liste_tailles, liste_algo, liste_all_essais, liste_all_tps)
 
     # plot
-    afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donnees_tps, nb_tours, taille_min, taille_max)
+    afficher_graphe(liste_tailles, liste_algo, liste_donnees_essais, liste_donnees_tps, nb_tours, dossier)
